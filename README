@@ -1,0 +1,73 @@
+P-SPECTRAL CLUSTERING
+
+This archive contains a Matlab implementation of 
+p-Laplacian based spectral clustering as proposed in the paper
+
+Thomas Buehler and Matthias Hein,
+Spectral Clustering based on the graph p-Laplacian,
+In Leon Bottou and Michael Littman, Proceedings of the 26th 
+International Conference on Machine Learning (ICML), 
+81-88, Omnipress, 2009
+
+Current version: V1.1
+
+
+
+INSTALLATION
+
+To install p-Spectral Clustering, compile the mexfiles 
+by starting the make.m script from within Matlab. The eigenvector 
+and resulting clustering can then be computed using the functions 
+'computePEigenvector' and 'pSpectralClustering', respectively. 
+
+
+
+SHORT DOCUMENTATION
+
+For more information type 'help functionname' on the Matlab prompt.
+
+
+pSpectralClustering (main method): Computes a multipartitioning using 
+the recursive splitting scheme described in the paper. Performs 
+p-Spectral Clustering into k clusters of the graph with weight matrix 
+W by using the second eigenvector of the unnormalized/normalized 
+graph p-Laplacian.
+
+computePEigenvector: Computes the second p-eigenvector of the graph 
+p-Laplacian of the graph with weight matrix W using the iterative 
+scheme introduced in the paper. As described in the paper, the 
+iterative scheme is initialized with the second eigenvector of the 
+standard graph Laplacian (p=2). However one can also provide an 
+initialization with a different p-eigenvector.
+
+createClusters: Transforms an eigenvector into a cluster indicator 
+function. You have the possibility to choose between different 
+thresholding criteria. 
+
+
+
+LICENSE
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+If you use this code for your publication, please include a reference 
+to the paper "Spectral Clustering based on the graph p-Laplacian".
+
+
+
+CONTACT
+
+Thomas Buehler and Matthias Hein
+Machine Learning Group, Saarland University
+http://www.ml.uni-saarland.de
