@@ -31,7 +31,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
         
-  	threshold_type = -1; %0: zero, 1: median, 2: mean, -1: best
+    threshold_type = -1; %0: zero, 1: median, 2: mean, -1: best
     criterion_threshold=2; % 1: Ratio/Normalized Cut, 2: Ratio/Normalized Cheeger Cut
     criterion_multicluster=1; % 1: Ratio/Normalized Cut, 2: Ratio/Normalized Cheeger Cut
         
@@ -42,17 +42,13 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
     cheegers=zeros(1,k-1);
 
     cutParts=zeros(1,k);
-    
-    
+   
     if(k<2)
         error ('Number of clusters has to be at least 2.');
     elseif(k>size(W,1))
         error ('Number of clusters is larger than size of the graph.');
     end      
-            
-    
-    
-    
+   
     deg=full(sum(W));
         
     fprintf('\nComputing partitioning for p=%.3f.\n',p);
@@ -62,8 +58,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
         start=randn(size(W,1));
         [vmin,fmin,umin,normGrad] = minimizeFunctional(W,p,1000000,start,1E-10,normalized,false);
     end
-       
-      
+     
     disp('...Computing cluster indicator function.');
           
     [allClusters, cut,cheeger,cutPart1,cutPart2] =  createClusters(vmin,W,normalized,threshold_type,criterion_threshold);
@@ -99,80 +94,72 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
                 cutPart2 = subCutParts(m,2);
                 
             else    
-            
                 Wm=W(indexM,indexM);
                 
                 [connected,components]=isConnected(Wm);
                 
                 if (connected)
-                                
-					fprintf('Computing partitioning of subgraph %d for p=%.3f.\n',m,p);
-					if (successive)
-						vminM = computePEigenvector(Wm,p,normalized);
-					else
-						startM=randn(size(Wm,1));
-						vminM = minimizeFunctional(Wm,p,1000000,startM,1E-10,normalized,false);
-					end
-							   
-
-					fprintf('...Computing cluster indicator function.\n\n');
-					if threshold_type>=0
-						threshold= determineThreshold(threshold_type,vminM);
-						allClustersInClusterM = vminM>threshold;
+                    fprintf('Computing partitioning of subgraph %d for p=%.3f.\n',m,p);
+                    if (successive)
+                        vminM = computePEigenvector(Wm,p,normalized);
+                    else
+                        startM=randn(size(Wm,1));
+                        vminM = minimizeFunctional(Wm,p,1000000,startM,1E-10,normalized,false);
+                    end
+	
+                    fprintf('...Computing cluster indicator function.\n\n');
+                    if threshold_type>=0
+                        threshold= determineThreshold(threshold_type,vminM);
+                        allClustersInClusterM = vminM>threshold;
                                                 
-						clusterM1=zeros(size(allClusters,1),1);
-						clusterM1(indexM)=allClustersInClusterM;
-						cutPart1 = computeCutValue(clusterM1,W,normalized); % vmin< threshold
+                        clusterM1=zeros(size(allClusters,1),1);
+                        clusterM1(indexM)=allClustersInClusterM;
+                        cutPart1 = computeCutValue(clusterM1,W,normalized); % vmin< threshold
 
-						clusterM2=zeros(size(allClusters,1),1);
-						clusterM2(indexM)=(allClustersInClusterM==0);
-						cutPart2 = computeCutValue(clusterM2,W,normalized); % vmin>threshold
-	 
-					else
-					 
-					 
-						% W has to have diagonal zero.
-						[vminM_sorted, index]=sort(vminM);
-						W_sorted=Wm(index,index);
+                        clusterM2=zeros(size(allClusters,1),1);
+                        clusterM2(indexM)=(allClustersInClusterM==0);
+                        cutPart2 = computeCutValue(clusterM2,W,normalized); % vmin>threshold
+                    else
+                        % W has to have diagonal zero.
+                        [vminM_sorted, index]=sort(vminM);
+                        W_sorted=Wm(index,index);
 
-						% calculate cuts
-						degM=deg(indexM);
-						volumes_threshold=cumsum(degM(index));
-						triup=triu(W_sorted);
-						tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup)));
-						tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))');            
+                        % calculate cuts
+                        degM=deg(indexM);
+                        volumes_threshold=cumsum(degM(index));
+                        triup=triu(W_sorted);
+                        tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup)));
+                        tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))');            
 						
-						% divide by size/volume
-						if(normalized)
-							cutparts1_threshold=tempcuts_threshold(1:end-1)./volumes_threshold(1:end-1);
-							cutparts2_threshold=tempcuts_threshold2(1:end-1)./(volumes_threshold(end)-volumes_threshold(1:end-1));
-						else
-							sizes_threshold=cumsum(ones(1,size(vminM,1)-1));
-							cutparts1_threshold=tempcuts_threshold(1:end-1)./sizes_threshold;
-							cutparts2_threshold=tempcuts_threshold2(1:end-1)./(size(vminM,1)-sizes_threshold);
-						end
+                        % divide by size/volume
+                        if(normalized)
+                            cutparts1_threshold=tempcuts_threshold(1:end-1)./volumes_threshold(1:end-1);
+                            cutparts2_threshold=tempcuts_threshold2(1:end-1)./(volumes_threshold(end)-volumes_threshold(1:end-1));
+                        else
+                            sizes_threshold=cumsum(ones(1,size(vminM,1)-1));
+                            cutparts1_threshold=tempcuts_threshold(1:end-1)./sizes_threshold;
+                            cutparts2_threshold=tempcuts_threshold2(1:end-1)./(size(vminM,1)-sizes_threshold);
+                        end
 						
-						%calculate total cuts
-						cuts_threshold=cutparts1_threshold+cutparts2_threshold;
-						cheegers_threshold=max(cutparts1_threshold,cutparts2_threshold);
+                        %calculate total cuts
+                        cuts_threshold=cutparts1_threshold+cutparts2_threshold;
+                        cheegers_threshold=max(cutparts1_threshold,cutparts2_threshold);
 
-						if(criterion_threshold==1)
-							[cut,threshold_index]=min(cuts_threshold);
-						else
-							[cheeger,threshold_index]=min(cheegers_threshold);
-						end
+                        if (criterion_threshold==1)
+                            [cut,threshold_index]=min(cuts_threshold);
+                        else
+                            [cheeger,threshold_index]=min(cheegers_threshold);
+                        end
 
-						cutPart1=cutparts1_threshold(threshold_index);
-						cutPart2=cutparts2_threshold(threshold_index);
+                        cutPart1=cutparts1_threshold(threshold_index);
+                        cutPart2=cutparts2_threshold(threshold_index);
 					
-	                    allClustersInClusterM = vminM>vminM_sorted(threshold_index);
-					end
+                        allClustersInClusterM = vminM>vminM_sorted(threshold_index);
+                    end
 					
-					subClusters{m}=allClustersInClusterM;
-					subCutParts(m,1:2)=[cutPart1 cutPart2];
-                    
+                    subClusters{m}=allClustersInClusterM;
+                    subCutParts(m,1:2)=[cutPart1 cutPart2];
                 else
-                    
                     allClustersInClusterM = components;
                     
                     clusterM1=zeros(size(allClusters,1),1);
@@ -185,9 +172,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
                     
                     subClusters{m}=allClustersInClusterM;
                     subCutParts(m,1:2)=[cutPart1 cutPart2];
-                    
                 end
-   
             end
             
             cut= sum(cutParts)-cutParts(m)+cutPart1+cutPart2;
@@ -235,9 +220,6 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
         else
             fprintf('Ratio Cut: %.8g \n\n',bestCut);
         end
- 
     end
-
-    
 end
 

@@ -18,7 +18,7 @@ function hessian = Hessian(u,W,p,normalized,deg)
         denom=pNormPow(u,p);
     end
 
-	W3u=getSparseDerivativeMatrix(u,sparse(W));
+    W3u=getSparseDerivativeMatrix(u,sparse(W));
     W4u=computeAbsPower(W3u,p-2);
     W5u= sparse(W.*W4u);
     W5= W5u+W5u';

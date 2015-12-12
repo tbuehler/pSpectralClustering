@@ -28,7 +28,7 @@ function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIt
     NoFunctionalChangeIterations=0;
     NoClusterChangeIterations=0;
     
-	threshold_type=-1;
+    threshold_type=-1;
     criterion=2;
 
     u=u/norm(u);
@@ -149,8 +149,8 @@ function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIt
         % Decide whether to do a Newton step or gradient step
         tryNewton=false;
         if(gradientCount==maxGradient) % if we have done a number of gradient steps
-                tryNewton=true; 
-                gradientCount=0;
+            tryNewton=true;
+            gradientCount=0;
         elseif(Newton)   %if last step was a (successful) Newton step
             tryNewton=true;
         end
@@ -196,6 +196,7 @@ function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIt
 
 end
   
+
 %% Makes a step
 function [newU,newV,newF,stepsize]=makeStep(v,currentF,graduval,descent,W,p,epsilon,normalized,deg,Newton,Armijo)  % returns the stepsize
  
@@ -215,84 +216,85 @@ function [newU,newV,newF,stepsize]=makeStep(v,currentF,graduval,descent,W,p,epsi
     
 end
 
+
 %% makes a step by selecting the step size via a golden section line search
 function [newU,newV,newF,stepsize]=makeStepGoldenSectionLineSearch(v,descent,W,p,epsilon,normalized,deg)
-       
-        a = epsilon;
-        b = 1;
+
+    a = epsilon;
+    b = 1;
     
-        stepsize=a;
-        newU=computeNewU(v,stepsize,descent);
-        [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);    
-        newA=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
-        aval=Functional(newA,W,p,normalized,deg);
+    stepsize=a;
+    newU=computeNewU(v,stepsize,descent);
+    [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);
+    newA=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
+    aval=Functional(newA,W,p,normalized,deg);
     
-        stepsize=b;
-        newU=computeNewU(v,stepsize,descent);
-        [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);       
-        newB=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
-        bval=Functional(newB,W,p,normalized,deg);
+    stepsize=b;
+    newU=computeNewU(v,stepsize,descent);
+    [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);       
+    newB=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
+    bval=Functional(newB,W,p,normalized,deg);
          
-
-        tau=(3-sqrt(5))/2;
+    tau=(3-sqrt(5))/2;
     
-        mu = a + tau*(b-a);
-        nu = b - tau*(b-a);
+    mu = a + tau*(b-a);
+    nu = b - tau*(b-a);
     
-        stepsize=mu;        
-        newU=computeNewU(v,stepsize,descent);
-        [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);       
-        newMu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
-        muval=Functional(newMu,W,p,normalized,deg);
+    stepsize=mu;
+    newU=computeNewU(v,stepsize,descent);
+    [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);
+    newMu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
+    muval=Functional(newMu,W,p,normalized,deg);
     
-        stepsize=nu;
-        newU=computeNewU(v,stepsize,descent);
-        [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
-        newNu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);     
-        nuval=Functional(newNu,W,p,normalized,deg);
+    stepsize=nu;
+    newU=computeNewU(v,stepsize,descent);
+    [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);
+    newNu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
+    nuval=Functional(newNu,W,p,normalized,deg);
  
-        while (b-a>epsilon)
-            if(muval>aval && nuval>bval)
-                if (aval<bval)
-                    bval=muval;
-                    b=mu;
-                else
-                    aval=nuval;
-                    a=nu;
-                end
-                mu = a + tau*(b-a);
-                nu = b - tau*(b-a);
-    
-                stepsize=mu;        
-                newU=computeNewU(v,stepsize,descent);
-                [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
-                newMu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
-                muval=Functional(newMu,W,p,normalized,deg);
-    
-                stepsize=nu;
-                newU=computeNewU(v,stepsize,descent);
-                [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
-                newNu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);     
-                nuval=Functional(newNu,W,p,normalized,deg);
+    while (b-a>epsilon)
+        if(muval>aval && nuval>bval)
+            if (aval<bval)
+                bval=muval;
+                b=mu;
             else
-                [a,aval,b,bval,mu,muval,nu,nuval] = updateBounds(a,aval,b,bval,mu,muval,nu,nuval,v,W,p,descent,tau,normalized,deg);
+                aval=nuval;
+                a=nu;
             end
+            mu = a + tau*(b-a);
+            nu = b - tau*(b-a);
+            
+            stepsize=mu;
+            newU=computeNewU(v,stepsize,descent);
+            [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
+            newMu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);
+            muval=Functional(newMu,W,p,normalized,deg);
+    
+            stepsize=nu;
+            newU=computeNewU(v,stepsize,descent);
+            [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
+            newNu=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);     
+            nuval=Functional(newNu,W,p,normalized,deg);
+        else
+            [a,aval,b,bval,mu,muval,nu,nuval] = updateBounds(a,aval,b,bval,mu,muval,nu,nuval,v,W,p,descent,tau,normalized,deg);
         end
-
-        [newF,ind]=min([aval,muval,nuval,bval]);
-        candidates=[a,mu, nu,b];
-        stepsize=candidates(1,ind(1));
+    end
+    
+    [newF,ind]=min([aval,muval,nuval,bval]);
+    candidates=[a,mu, nu,b];
+    stepsize=candidates(1,ind(1));
                 
-        newU=computeNewU(v,stepsize,descent);
-        [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);     
-        newV=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);     
+    newU=computeNewU(v,stepsize,descent);
+    [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);     
+    newV=minimizeVariance(newU,p,normalized,deg,estimate,leftestimate,rightestimate);     
 
 end
+
 
 %% makes a step with Armijo stepsize selection
 function [newU,newV,newF,stepsize]=makeStepArmijo(v,currentF,graduval,descent,sigma,beta,W,p,epsilon,normalized,deg)  % returns the stepsize
 
-	stepsize=1;
+    stepsize=1;
 
     newU=computeNewU(v,stepsize,descent);
     [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
@@ -320,12 +322,11 @@ function [newU,newV,newF,stepsize]=makeStepArmijo(v,currentF,graduval,descent,si
 end
 
 
-
-
 %% makes a step with Armijo stepsize selection
 function [newU,newV,newF,stepsize]=makeStepArmijoGradient(v,currentF,graduval,descent,sigma,beta,W,p,epsilon,normalized,deg)  % returns the stepsize
-iter=1;
-	stepsize=1;
+
+    iter=1;
+    stepsize=1;
 
     newU=computeNewU(v,stepsize,descent);
     [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize);  
@@ -348,7 +349,6 @@ iter=1;
        
         leftside=newF-currentF;
         rightside=rightside*beta;
-
     end
     
 end
@@ -356,17 +356,18 @@ end
 
 %% Computes the new iterate
 function newU=computeNewU(v,stepsize,descent)
-        
+
     newU=v+stepsize*descent;
 
 end
 
+
 %% Calculates estimates for the variance minimizer
 function [leftestimate, estimate, rightestimate]=calculateEstimates(descent,stepsize)
-        
+
     estimate = stepsize*median(descent);
-	leftestimate = stepsize*min(descent);
-	rightestimate = stepsize*max(descent);
+    leftestimate = stepsize*min(descent);
+    rightestimate = stepsize*max(descent);
 
 end
 
@@ -425,6 +426,7 @@ function [a,aval,b,bval,mu,muval,nu,nuval]=updateBounds(a,aval,b,bval,mu,muval,n
     end
            
 end
+
 
 %% Computes new test points for interval boundary
 function [mu,nu,muval,nuval]=computeMuNu(a,b,v,W,p,descent,tau,normalized,deg)

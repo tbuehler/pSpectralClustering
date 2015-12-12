@@ -45,12 +45,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
     return;
   }
     
-   nzmaxOld = mxGetNzmax(prhs[1]); // number of nonzero elements of sparse matrix
-   ir = mxGetIr(prhs[1]);
-   jc = mxGetJc(prhs[1]);
-   weights = mxGetPr(prhs[1]);
+  nzmaxOld = mxGetNzmax(prhs[1]); // number of nonzero elements of sparse matrix
+  ir = mxGetIr(prhs[1]);
+  jc = mxGetJc(prhs[1]);
+  weights = mxGetPr(prhs[1]);
     
-  
   // Allocate memory for output (sparse real matrix)
   v = mxCreateSparse(num, num, nzmaxOld/2, mxREAL);
   sr = mxGetPr(v);
@@ -65,55 +64,53 @@ void mexFunction(int nlhs, mxArray *plhs[],
  
   while(currentEntryIndexOld<nzmaxOld && currentColumnIndex<sizeWn)
   {
-    numColumnEntriesOld=jc[currentColumnIndex+1];
-    uy=u[currentColumnIndex];
+      numColumnEntriesOld=jc[currentColumnIndex+1];
+      uy=u[currentColumnIndex];
        
-     while(currentEntryIndexOld<numColumnEntriesOld)
-     {         
-         currentRowIndex=ir[currentEntryIndexOld];
-		 
-		 if (currentRowIndex<currentColumnIndex)
-         {
-			ux= u[currentRowIndex];
-			derivative=uy-ux;
-         
-			if (derivative != 0)
-			{
-				sr[currentEntryIndexNew]=derivative;
-				irs[currentEntryIndexNew]=currentRowIndex;
-				currentEntryIndexNew++;
-			}
-			else
-            {
-                skippedEntries++;
-            }
-        }
-         else
-         {
-             skippedEntries++;
-         }
-         currentEntryIndexOld++;
-     }
-     jcs[currentColumnIndex+1]=numColumnEntriesOld-skippedEntries;
-
-     currentColumnIndex++;
+      while(currentEntryIndexOld<numColumnEntriesOld)
+      {
+          currentRowIndex=ir[currentEntryIndexOld];
+          
+          if (currentRowIndex<currentColumnIndex)
+          {
+              ux= u[currentRowIndex];
+              derivative=uy-ux;
+              
+              if (derivative != 0)
+              {
+                  sr[currentEntryIndexNew]=derivative;
+                  irs[currentEntryIndexNew]=currentRowIndex;
+                  currentEntryIndexNew++;
+              }
+              else
+              {
+                  skippedEntries++;
+              }
+          }
+          else
+          {
+              skippedEntries++;
+          }
+          currentEntryIndexOld++;
+      }
+      jcs[currentColumnIndex+1]=numColumnEntriesOld-skippedEntries;
+      
+      currentColumnIndex++;
   }
-
+  
   nzmaxNew=nzmaxOld-skippedEntries;
-
+  
   for(;currentColumnIndex<sizeWn;currentColumnIndex++)
   {
-    jcs[currentColumnIndex+1]=nzmaxNew;
+      jcs[currentColumnIndex+1]=nzmaxNew;
   }
-   
-    newSr = mxRealloc(sr, nzmaxNew * sizeof(double));
-    mxSetPr(v,(double*)newSr);
-    newIrs= mxRealloc(irs, nzmaxNew * sizeof(mwIndex));
-    mxSetIr(v,(mwIndex*) newIrs);
-    mxSetNzmax(v,nzmaxNew);
   
+  newSr = mxRealloc(sr, nzmaxNew * sizeof(double));
+  mxSetPr(v,(double*)newSr);
+  newIrs= mxRealloc(irs, nzmaxNew * sizeof(mwIndex));
+  mxSetIr(v,(mwIndex*) newIrs);
+  mxSetNzmax(v,nzmaxNew);
+  
+  plhs[0]=v; 
 
-   plhs[0]=v; 
- 
-  
- }
+}
