@@ -1,4 +1,4 @@
-function [clusters,cuts,cheegers,vmin,fmin,normGrad] = computeClustering(W,p,normalized,k)
+function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = computeClustering(W,p,normalized,k)
 % Computes a multipartitioning of the data given by a similarity matrix W 
 % by recursively computing bipartitions using the second eigenvector of 
 % the graph p-Laplacian.
@@ -57,7 +57,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad] = computeClustering(W,p,nor
         
     fprintf('\nComputing partitioning for p=%.3f.\n',p);
     if (successive)
-        [vmin,fmin,umin,normGrad] = computePEigenvector(W,p,normalized);
+        [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized);
     else
         start=randn(size(W,1));
         [vmin,fmin,umin,normGrad] = minimizeFunctional(W,p,1000000,start,1E-10,normalized,false);

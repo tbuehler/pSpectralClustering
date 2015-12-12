@@ -1,4 +1,4 @@
-function [vmin,fmin,umin,normGrad] = computePEigenvector(W,p,normalized,vmin,p_old)
+function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized,vmin,p_old)
 % Computes the second eigenvalue/eigenvector of the graph p-Laplacian.
 %
 % Usage:	[vmin,fmin,umin,normGrad] = computePEigenvector(W,p,normalized,vmin,p_old)
@@ -82,7 +82,7 @@ function [vmin,fmin,umin,normGrad] = computePEigenvector(W,p,normalized,vmin,p_o
 
          fprintf('...Computing eigenvector of p-Laplacian for p= %.3f.\n',p);
       
-         [vmin,fmin,umin,normGrad]=minimizeFunctional(W,p,itmax,vmin,epsilon,normalized,false);
+         [vmin,fmin,umin,normGrad,clust_iter,funct_iter]=minimizeFunctional(W,p,itmax,vmin,epsilon,normalized,false);
    
     end
 end
