@@ -12,14 +12,14 @@
 void mexFunction(int nlhs, mxArray *plhs[],
 		 int nrhs, const mxArray *prhs[]) {
   
-  mwSize num,sizeWm,sizeWn,n1;
+  mwSize num,sizeWm,sizeWn;
   double* u;
   mxArray * v;
-  mwSize nzmaxNew,nzmaxOld,nzmaxt;
+  mwSize nzmaxNew,nzmaxOld;
   mwIndex *ir, *jc, *irs, *jcs;
   double *weights,*sr;
   mwIndex currentColumnIndex,currentEntryIndexOld, numColumnEntriesOld,currentRowIndex;
-  mwIndex currentEntryIndexNew, numColumnEntriesNew,skippedEntries;
+  mwIndex currentEntryIndexNew,skippedEntries;
   double ux,uy,derivative;
   void * newSr, * newIrs;
              
@@ -65,7 +65,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
  
   while(currentEntryIndexOld<nzmaxOld && currentColumnIndex<sizeWn)
   {
-	numColumnEntriesOld=jc[currentColumnIndex+1];
+    numColumnEntriesOld=jc[currentColumnIndex+1];
     uy=u[currentColumnIndex];
        
      while(currentEntryIndexOld<numColumnEntriesOld)
@@ -84,15 +84,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
 				currentEntryIndexNew++;
 			}
 			else
-			{
-				skippedEntries++;
-			}
-		}
-		else
-        {
-			skippedEntries++;
-		}
-		currentEntryIndexOld++;
+            {
+                skippedEntries++;
+            }
+        }
+         else
+         {
+             skippedEntries++;
+         }
+         currentEntryIndexOld++;
      }
      jcs[currentColumnIndex+1]=numColumnEntriesOld-skippedEntries;
 
