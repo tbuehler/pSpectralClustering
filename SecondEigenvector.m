@@ -13,9 +13,11 @@ function [vmin,fmin]= SecondEigenvector(W,normalized)
 % (at your option) any later version.
 
     options.disp=0;
+    opts.tol = 1E-10;
+    opts.issym = 1;
   
     D=sparse(diag(sum(W)));
-	Lp=D-W;
+    Lp=D-W;
  
     if(normalized)
         [eigVecs,eigVals] =eigs(Lp,D,2,'SA',options);
@@ -23,7 +25,7 @@ function [vmin,fmin]= SecondEigenvector(W,normalized)
         [eigVecs,eigVals] =eigs(Lp,2,'SA',options);
     end
     
-	vmin=eigVecs(:,2);
+    vmin=eigVecs(:,2);
     vmin=vmin/norm(vmin);
     fmin=eigVals(2,2);
     
