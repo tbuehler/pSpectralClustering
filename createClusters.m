@@ -55,14 +55,13 @@ function [allClusters, cut,cheeger,cutPart1,cutPart2,threshold] =  createCluster
 
     assert(isempty(find(diag(W)~=0,1)),'Graph contains self loops. W has to have zero diagonal.');
 	
-	if threshold_type>=0
+    if threshold_type>=0
             threshold= determineThreshold(threshold_type,vmin);
             allClusters= (vmin>threshold);
-		    [cutPart1,cutPart2] = computeCutValue(allClusters,W,normalized); %cutPart1: vmin<threshold, cutPart2: vmin>threshold
+            [cutPart1,cutPart2] = computeCutValue(allClusters,W,normalized); %cutPart1: vmin<threshold, cutPart2: vmin>threshold
             cut=cutPart1+cutPart2;
             cheeger=max(cutPart1,cutPart2);
     else
-
             [vmin_sorted, index]=sort(vmin);
             W_sorted=W(index,index);
 
@@ -119,7 +118,6 @@ function [allClusters, cut,cheeger,cutPart1,cutPart2,threshold] =  createCluster
                 threshold=vmin_sorted(threshold_index);
             
             else
-            
                 % don't threshold within regions of same value
 
                 %[vminU,indexU]=unique(vmin_sorted(1:end-1));% unique gives index of last occurence
@@ -149,11 +147,8 @@ function [allClusters, cut,cheeger,cutPart1,cutPart2,threshold] =  createCluster
 
                 threshold=vmin_sorted(indexU(threshold_index));
                 allClusters=vmin>threshold;
-
             end
-
     end
-    
 end
 
 

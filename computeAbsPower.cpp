@@ -18,7 +18,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
   mwIndex *ir, *jc, *irs, *jcs;
   double *weights,*sr;
   double * p;
-  mwIndex currentEntryIndex,currentColumnIndex,numColumnEntries;
+  //mwIndex currentEntryIndex,currentColumnIndex,numColumnEntries;
   mwIndex i;
              
   // Test number of parameters.
@@ -48,9 +48,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
   jcs = mxGetJc(v);
   
   
-  currentEntryIndex=0;
-  currentColumnIndex=0;
-  numColumnEntries=0;
+  //currentEntryIndex=0;
+  //currentColumnIndex=0;
+  //numColumnEntries=0;
   
   jcs[0]=0;
  

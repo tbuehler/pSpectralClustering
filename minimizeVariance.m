@@ -15,20 +15,20 @@ function [v,cest] = minimizeVariance(u,p,normalized,deg,cest,cmin,cmax)
 % (at your option) any later version.
 
     % Parameters for stepsize selection
-	sigma=0.01;
+    sigma=0.01;
     beta=0.3;
-	eps_descent=1E-10;
+    eps_descent=1E-10;
     
-	% Initialization
-	i=0;
+    % Initialization
+    i=0;
     flipcount=0;
-	var_old=0;
+    var_old=0;
 
-	% Update value of v
+    % Update value of v
     v=u-cest;
     v_abs=abs(v);
     
-	% Compute gradient
+    % Compute gradient
     if (normalized)
         grad= p*deg*(v_abs.^(p-1).*sign(v))*(-1);
     else
@@ -40,7 +40,7 @@ function [v,cest] = minimizeVariance(u,p,normalized,deg,cest,cmin,cmax)
     while (gradnorm>eps_descent && i<=100)
         
         % Compute Hessian
-		if (normalized)
+        if (normalized)
             hessian= (deg*v_abs.^(p-2))*(p-1)*p;
         else
             hessian=sum(v_abs.^(p-2))*(p-1)*p;
@@ -58,7 +58,7 @@ function [v,cest] = minimizeVariance(u,p,normalized,deg,cest,cmin,cmax)
         
        if (i<2)
             % Full Newton step
-			cest_new=cest+descent;
+            cest_new=cest+descent;
             
             if (cest_new>cmax)
                 cest_new=cmax;
@@ -66,7 +66,7 @@ function [v,cest] = minimizeVariance(u,p,normalized,deg,cest,cmin,cmax)
                 cest_new=cmin;
             end
        else
-			% Newton step with reduced stepsize
+            % Newton step with reduced stepsize
             cest_new=cest+descent;
             if (cest_new>cmax)
                 stepsize_init= (cmax-cest)/descent;
@@ -88,14 +88,14 @@ function [v,cest] = minimizeVariance(u,p,normalized,deg,cest,cmin,cmax)
         end
         
         % If the gradient keeps flipping signs, just take the mean of the last two iterates
-		if (flipcount==2 || i==100)
+        if (flipcount==2 || i==100)
             cest=(cest+cest_new)/2;
             flipcount=0;
         else
             cest=cest_new;
         end
              
-		% Update value of v
+        % Update value of v
         v=u-cest;
         v_abs=abs(v);
         
@@ -136,7 +136,7 @@ function [c_new,stepsize,var_new] = makestep(c_old,descent,graduval,v_old,var_ol
     if (normalized)
         var_new = pNormPowDeg(v_new,p,deg);
     else
-         var_new = pNormPow(v_new,p);
+        var_new = pNormPow(v_new,p);
     end
     
     leftside=(var_new - var_old)/var_new;
@@ -152,13 +152,11 @@ function [c_new,stepsize,var_new] = makestep(c_old,descent,graduval,v_old,var_ol
         if (normalized)
             var_new = pNormPowDeg(v_new,p,deg);
         else
-         var_new = pNormPow(v_new,p);
+            var_new = pNormPow(v_new,p);
         end
     
         leftside=(var_new - var_old)/var_new;
         rightside=rightside*beta;
-
     end
-    
 end
 
