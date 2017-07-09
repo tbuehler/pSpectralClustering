@@ -1,4 +1,4 @@
-function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized,vmin,p_old)
+function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized,stop_early,vmin,p_old)
 % Computes the second eigenvalue/eigenvector of the graph p-Laplacian.
 %
 % Usage:	[vmin,fmin,umin,normGrad] = computePEigenvector(W,p,normalized,vmin,p_old)
@@ -9,6 +9,7 @@ function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W
 % p             - Has to be in the interval ]1,2].
 % normalized    - true for normalized graph p-Laplacian, false for 
 %                 unnormalized graph p-Laplacian
+% stop_early    - Optional: stops eigenvector computation if tresholded vector does not change anymore (default:false)
 % vmin          - Optional initialization (default: 2nd eigenvector of 
 %                 standard graph Laplacian)
 % p_old         - Optional start value for reduction of p (default:2)
@@ -38,7 +39,7 @@ function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W
         error('Graph is not connected.');
     elseif p<=1 || p>2
         error ('p has to be in the interval ]1,2].');
-    elseif nargin==8 && p_old<p
+    elseif nargin==6 && p_old<p
         error ('Old value of p is smaller than new value.');
     end
 
@@ -52,16 +53,18 @@ function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W
     % reduction factor
     factor=0.9;
 
-    
-    if (nargin<5)
+    if (nargin<6)
         p_old=2;
     end;
-    if (nargin<4)
+    if (nargin<5)
         disp('...Computing eigenvector of standard Laplacian (p=2).');
         [vmin,fmin] = SecondEigenvector(W,normalized);
         umin=vmin;
         normGrad=0;
     end
+    if (nargin<4)
+	stop_early=false;
+    end;
     
     if (p<2)
         p_new=p_old*factor;
@@ -73,7 +76,7 @@ function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W
             end
             fprintf('...Computing eigenvector of p-Laplacian for p= %.3f.\n',p_new);
           
-            vmin=minimizeFunctional(W,p_new,itmax,vmin,epsilon,normalized,true);
+            vmin=minimizeFunctional(W,p_new,itmax,vmin,epsilon,normalized,true,stop_early);
       
             p_old=p_new;
             p_new=p_old*factor;
@@ -82,7 +85,7 @@ function [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W
 
          fprintf('...Computing eigenvector of p-Laplacian for p= %.3f.\n',p);
       
-         [vmin,fmin,umin,normGrad,clust_iter,funct_iter]=minimizeFunctional(W,p,itmax,vmin,epsilon,normalized,false);
+         [vmin,fmin,umin,normGrad,clust_iter,funct_iter]=minimizeFunctional(W,p,itmax,vmin,epsilon,normalized,false,stop_early);
    
     end
 end

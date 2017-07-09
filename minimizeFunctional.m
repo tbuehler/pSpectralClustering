@@ -1,4 +1,4 @@
-function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIterations]=minimizeFunctional(W,p,itmax,u,epsilon,normalized,intermediate)
+function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIterations]=minimizeFunctional(W,p,itmax,u,epsilon,normalized,intermediate, stop_early)
 % Computes the minimum of the variational characterization of the second eigenvector of the 
 % graph p-Laplacian via a combination of steepest descent and Newton descent.
 % 
@@ -14,17 +14,23 @@ function [vmin,fmin,umin,normgrad,NoClusterChangeIterations,NoFunctionalChangeIt
 % (at your option) any later version.
 
     eps_descent=1E-6;
-    
-    num=length(u);
 
     if(intermediate)
         maxNoClusterChangeIterations=12/(p*p);
-    else
+    elseif(stop_early)
         maxNoClusterChangeIterations=15;
+    else
+        maxNoClusterChangeIterations=inf;
     end
     
+    if(stop_early)
+        maxNoFunctionalChangeIterations=10;
+    else
+        maxNoFunctionalChangeIterations=inf;
+    end;
+
     maxGradient=10;
-    maxNoFunctionalChangeIterations=10;
+    num=length(u);
     NoFunctionalChangeIterations=0;
     NoClusterChangeIterations=0;
     

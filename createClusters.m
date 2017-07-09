@@ -55,7 +55,7 @@ function [allClusters, cut,cheeger,cutPart1,cutPart2,threshold] =  createCluster
 
     assert(isempty(find(diag(W)~=0,1)),'Graph contains self loops. W has to have zero diagonal.');
 	
-    if threshold_type>=0
+    if threshold_type>=0 && threshold_type<3
             threshold= determineThreshold(threshold_type,vmin);
             allClusters= (vmin>threshold);
             [cutPart1,cutPart2] = computeCutValue(allClusters,W,normalized); %cutPart1: vmin<threshold, cutPart2: vmin>threshold
