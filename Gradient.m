@@ -12,13 +12,11 @@ function gradient = Gradient(u,W,p,normalized,deg,functional)
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
 
-    W3u = getSparseDerivativeMatrix(u,W);
-    W4u=computeAbsPower(W3u,p-1);
-    W4ub=W4u.*sign(W3u);
-    W5u= sparse(W.*W4ub);
-    W5= W5u-W5u';
-    
-    left=sum(W5)';
+    W3 = getSparseDerivativeMatrix(u,W);
+    W4=computeAbsPower(W3,p-1);
+    W4=W4.*sign(W3);
+    W5= sparse(W.*W4);
+    left=sum(W5-W5')';
 
     u2=abs(u).^(p-1).*sign(u);
     

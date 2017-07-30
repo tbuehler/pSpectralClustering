@@ -133,9 +133,9 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = pSp
                         % calculate cuts
                         degM=deg(indexM);
                         volumes_threshold=cumsum(degM(index));
-                        triup=triu(W_sorted);
-                        tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup)));
-                        tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))');            
+                        triup=triu(W_sorted,1);
+                        tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup))) - cumsum(full(diag(W_sorted)))';
+                        tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))' - cumsum(full(diag(W_sorted)))');             
 						
                         % divide by size/volume
                         if(normalized)

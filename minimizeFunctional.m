@@ -378,7 +378,7 @@ function [leftestimate, estimate, rightestimate]=calculateEstimates(descent,step
 end
 
 
-%% Updates the bounds around the best solution    
+%% Updates the bounds around the best solution
 function [a,aval,b,bval,mu,muval,nu,nuval]=updateBounds(a,aval,b,bval,mu,muval,nu,nuval,v,W,p,descent,tau,normalized,deg)
 
     if (muval<nuval)

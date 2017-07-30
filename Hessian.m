@@ -18,13 +18,13 @@ function hessian = Hessian(u,W,p,normalized,deg)
         denom=pNormPow(u,p);
     end
 
-    W3u=getSparseDerivativeMatrix(u,sparse(W));
-    W4u=computeAbsPower(W3u,p-2);
-    W5u= sparse(W.*W4u);
-    W5= W5u+W5u';
+    W3=getSparseDerivativeMatrix(u,sparse(W));
+    W3=computeAbsPower(W3,p-2);
+    W4= sparse(W.*W3);
+    W4= W4+W4';
    
-    D=diag(sum(W5));
+    D=diag(sum(W4));
    
-    hessian = p*(p-1)/denom * (D-W5);
+    hessian = p*(p-1)/denom * (D-W4);
 
 end
