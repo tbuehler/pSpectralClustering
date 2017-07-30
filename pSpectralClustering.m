@@ -1,4 +1,4 @@
-function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = computeClustering(W,p,normalized,k)
+function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = pSpectralClustering(W,p,normalized,k,stop_early)
 % Computes a multipartitioning of the data given by a similarity matrix W 
 % by recursively computing bipartitions using the second eigenvector of 
 % the graph p-Laplacian.
@@ -9,6 +9,8 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
 % p             - Has to be in the interval ]1,2].
 % normalized    - true for Ncut/NCC, false for Rcut/RCC
 % k             - number of clusters
+% stop_early    - Optional: stops eigenvector computation if tresholded vector does not change anymore (default:true).
+%                 set to false to compute eigenvector more accurately
 %
 % clusters      - mx(k-1) matrix containing in each column the computed 
 %                 clustering for each partitioning step.
@@ -31,6 +33,10 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
         
+    if (nargin<5)
+        stop_early=true;
+    end
+
     threshold_type = -1; %0: zero, 1: median, 2: mean, -1: best
     criterion_threshold=2; % 1: Ratio/Normalized Cut, 2: Ratio/Normalized Cheeger Cut
     criterion_multicluster=1; % 1: Ratio/Normalized Cut, 2: Ratio/Normalized Cheeger Cut
@@ -53,7 +59,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
         
     fprintf('\nComputing partitioning for p=%.3f.\n',p);
     if (successive)
-        [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized);
+        [vmin,fmin,umin,normGrad,clust_iter,funct_iter] = computePEigenvector(W,p,normalized,stop_early);
     else
         start=randn(size(W,1));
         [vmin,fmin,umin,normGrad] = minimizeFunctional(W,p,1000000,start,1E-10,normalized,false);
@@ -101,7 +107,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
                 if (connected)
                     fprintf('Computing partitioning of subgraph %d for p=%.3f.\n',m,p);
                     if (successive)
-                        vminM = computePEigenvector(Wm,p,normalized);
+                        vminM = computePEigenvector(Wm,p,normalized,stop_early);
                     else
                         startM=randn(size(Wm,1));
                         vminM = minimizeFunctional(Wm,p,1000000,startM,1E-10,normalized,false);
@@ -127,9 +133,9 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = com
                         % calculate cuts
                         degM=deg(indexM);
                         volumes_threshold=cumsum(degM(index));
-                        triup=triu(W_sorted);
-                        tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup)));
-                        tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))');            
+                        triup=triu(W_sorted,1);
+                        tempcuts_threshold=volumes_threshold - 2*cumsum(full(sum(triup))) - cumsum(full(diag(W_sorted)))';
+                        tempcuts_threshold2=(volumes_threshold(end)-volumes_threshold) - (sum(sum(W_sorted))-2*cumsum(full(sum(triup,2)))' - cumsum(full(diag(W_sorted)))');             
 						
                         % divide by size/volume
                         if(normalized)

@@ -6,8 +6,6 @@ is computed using the second eigenvector of the unnormalized or
 normalized graph p-Laplacian. A multipartitioning is then obtained using 
 a recursive splitting scheme.
 
-Current version: V1.1
-
 
 
 ## Installation
@@ -45,11 +43,14 @@ For more information type 'help functionname' on the Matlab prompt.
 
 ## References
 
-Thomas Bühler and Matthias Hein,
-*Spectral Clustering based on the graph p-Laplacian*. 
-In Leon Bottou and Michael Littman, Proceedings of the 26th 
-International Conference on Machine Learning (ICML), 
-81-88, Omnipress, 2009.
+    @inproceedings{BueHei2009,
+      author ={B\"{u}hler, Thomas and Hein, Matthias},
+      title = {Spectral {C}lustering based on the graph $p$-{L}aplacian},
+      booktitle = {Proceedings of the 26th International Conference on Machine Learning},
+      pages={81-88},
+      publisher={Omnipress},
+      year={2009}
+    }
 
 
 
