@@ -93,6 +93,7 @@ function [clusters,cuts,cheegers,vmin,fmin,normGrad,clust_iter,funct_iter] = pSp
         for m=1:l-1
             
             indexM=find(allClusters==m);
+            if (length(indexM)==1) continue; end
                
             if (~isempty(subClusters{m}))
                 allClustersInClusterM = subClusters{m};
