@@ -14,16 +14,15 @@ function [vmin,fmin]= SecondEigenvector(W,normalized)
 
     opts.disp = 0;
     opts.tol = 1E-4;
-    opts.issym = 1;
     opts.maxit = 1000;  
 
     D=sparse(diag(sum(W)));
     Lp=D-W;
  
     if(normalized)
-        [eigVecs,eigVals] =eigs(Lp,D,2,'SA',opts);
+        [eigVecs,eigVals] =eigs(Lp,D,2,'smallestabs',opts);
     else
-        [eigVecs,eigVals] =eigs(Lp,2,'SA',opts);
+        [eigVecs,eigVals] =eigs(Lp,2,'smallestabs',opts);
     end
     
     vmin=eigVecs(:,2);
